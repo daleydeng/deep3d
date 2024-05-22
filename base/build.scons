@@ -1,0 +1,35 @@
+from os import environ, path
+
+AddOption('--B', default='build')
+AddOption('--P', default='/usr/local/')
+build_d = GetOption('B')
+install_d = GetOption('P')
+VariantDir(build_d, '.', duplicate=0)
+
+if ARGUMENTS.get('shared', 0):
+    Library = SharedLibrary
+else:
+    Library = StaticLibrary
+
+spm_d=environ.get('SPM_BASE', '/')
+env = DefaultEnvironment(ENV=environ)
+env.Append(
+    CXXFLAGS="-O2 -Wall -std=c++14 -fdiagnostics-color=auto",
+    LINKFLAGS="-Wl,--unresolved-symbols=ignore-in-shared-libs -Wl,--as-needed",
+    LIBPATH=[spm_d+'/lib' if spm_d else '', '/usr/local/lib', '/usr/local/lib64', build_d+'/lib'],
+    CPPPATH=[spm_d+'/include' if spm_d else '', '/usr/local/include'],
+    RPATH=build_d+'/lib',
+)
+
+pyenv = env.Clone()
+pyenv['SHLIBPREFIX']=''
+pyenv.ParseConfig('pkg-config --cflags --libs python3')
+
+pkgs = {
+    'g2o': {'LIBS': ['g2o_core', 'g2o_types_sba', 'g2o_solver_cholmod', 'g2o_incremental', 'g2o_solver_slam2d_linear', 'g2o_stuff', 'g2o_csparse_extension']},
+    'opencv3': {'LIBS': ['opencv_core', 'opencv_highgui', 'opencv_imgproc', 'opencv_imgcodecs', 'opencv_calib3d', 'opencv_flann']},
+    'suitesparse': {'CPPPATH': '/usr/include/suitesparse',
+                    'LIBS': ['cholmod', 'cxsparse']},
+    'eigen3': {'CPPPATH': '/usr/include/eigen3'},
+    'boost': {'LIBS': ['boost_system', 'boost_thread']}
+}

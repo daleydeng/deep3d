@@ -1,0 +1,69 @@
+syntax = 'proto3';
+
+message Empty {}
+
+message String {
+  string data = 1;
+}
+
+message Int64 {
+  int64 data = 1;
+}
+
+message Bool {
+  bool data = 1;
+}
+
+message Id{
+  int64 data = 1;
+}
+
+message NDArray {
+  string descr = 1;
+  bool fortran_order = 2;
+  repeated int32 shape = 3;
+  string format = 4;
+  bytes data = 5;
+}
+
+message ImageData {
+  string format = 1;
+  bytes data = 5;
+}
+
+message Size {
+  int32 w = 1;
+  int32 h = 2;
+}
+
+message Point3 {
+  float x = 1;
+  float y = 2;
+  float z = 3;
+}
+
+message Point2 {
+  float x = 1;
+  float y = 2;
+}
+
+message Face {
+  repeated int32 idxs = 1;
+}
+
+message Mesh {
+  repeated Point3 xyzs = 1;
+  repeated Face faces = 2;
+}
+
+message ROI {
+  int32 x0 = 1;
+  int32 y0 = 2;
+  int32 x1 = 3;
+  int32 y1 = 4;
+}
+
+message ProbLabel {
+  string label = 1;
+  float prob = 2;
+}
